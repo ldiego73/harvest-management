@@ -115,7 +115,7 @@ export class Harvest extends AggregateRoot<HarvestProps> {
     return ok(new Harvest(props, id));
   }
 
-  static get(id: string, props: HarvestProps): Harvest {
+  static from(id: string, props: HarvestProps): Harvest {
     return new Harvest(props, new UniqueEntityId(id));
   }
 }

@@ -36,7 +36,7 @@ export class Variety extends Entity<VarietyProps> {
     return ok(new Variety(props, id));
   }
 
-  static get(id: string, props: VarietyProps): Variety {
+  static from(id: string, props: VarietyProps): Variety {
     return new Variety(props, new UniqueEntityId(id));
   }
 }

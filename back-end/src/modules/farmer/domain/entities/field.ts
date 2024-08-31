@@ -24,6 +24,10 @@ export class Field extends Entity<FieldProps> {
     return this.props.name;
   }
 
+  get farmerId(): UniqueEntityId {
+    return this.props.farmerId;
+  }
+
   static create(
     props: FieldProps,
     id?: UniqueEntityId,
@@ -43,7 +47,7 @@ export class Field extends Entity<FieldProps> {
     return ok(new Field(props, id));
   }
 
-  static get(id: string, props: FieldProps): Field {
+  static from(id: string, props: FieldProps): Field {
     return new Field(props, new UniqueEntityId(id));
   }
 }

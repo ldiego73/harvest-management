@@ -8,7 +8,6 @@ import { Email } from "@shared/domain/value-objects";
 import { ClientInvalidException } from "../exceptions";
 
 export type ClientProps = Readonly<{
-  id: string;
   email: Email;
   name: string;
   lastName: string;
@@ -53,7 +52,7 @@ export class Client extends AggregateRoot<ClientProps> {
     return ok(new Client(props, id));
   }
 
-  static get(id: string, props: ClientProps): Client {
+  static from(id: string, props: ClientProps): Client {
     return new Client(props, new UniqueEntityId(id));
   }
 }

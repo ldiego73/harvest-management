@@ -1,10 +1,10 @@
 import { Variety } from "../entities";
 
 export interface VarietyRepository {
-  findById(id: string): Variety;
-  findAllByFruitId(id: string): Variety[];
-  findAll(): Variety[];
+  findById(id: string): Promise<Variety | null>;
+  findAllByFruitId(id: string): Promise<Variety[]>;
+  findAll(): Promise<Variety[]>;
 
-  save(variety: Variety): void;
-  update(variety: Variety): void;
+  save(variety: Variety): Promise<Variety>;
+  update(variety: Variety, varietyId: string): Promise<Variety>;
 }

@@ -70,7 +70,7 @@ export class Fruit extends AggregateRoot<FruitProps> {
     return ok(new Fruit(props, id));
   }
 
-  static get(id: string, props: FruitProps): Fruit {
+  static from(id: string, props: FruitProps): Fruit {
     return new Fruit(props, new UniqueEntityId(id));
   }
 }

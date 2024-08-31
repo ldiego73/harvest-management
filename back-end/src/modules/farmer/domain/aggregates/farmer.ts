@@ -99,7 +99,7 @@ export class Farmer extends AggregateRoot<FarmerProps> {
     return ok(new Farmer(props, id));
   }
 
-  static get(id: string, props: FarmerProps): Farmer {
+  static from(id: string, props: FarmerProps): Farmer {
     return new Farmer(props, new UniqueEntityId(id));
   }
 }

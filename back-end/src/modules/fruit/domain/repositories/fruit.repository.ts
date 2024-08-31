@@ -1,9 +1,9 @@
 import { Fruit } from "../aggregates";
 
 export interface FruitRepository {
-  findById(id: string): Fruit;
-  findAll(): Fruit[];
+  findById(id: string): Promise<Fruit | null>;
+  findAll(): Promise<Fruit[]>;
 
-  save(fruit: Fruit): void;
-  update(fruit: Fruit): void;
+  save(fruit: Fruit): Promise<Fruit>;
+  update(fruit: Fruit, fruitId: string): Promise<Fruit>;
 }

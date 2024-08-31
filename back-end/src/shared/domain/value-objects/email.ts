@@ -12,6 +12,10 @@ export class Email extends ValueObject<EmailProps> {
     super(props);
   }
 
+  get value(): string {
+    return this.props.value;
+  }
+
   static create(value: string): Email {
     if (isNullOrUndefined(value) || value.trim() === "") {
       throw new EmailInvalidException("EMAIL_REQUIRED", "Email is required");
@@ -21,6 +25,10 @@ export class Email extends ValueObject<EmailProps> {
       throw new EmailInvalidException("EMAIL_INVALID", "Email is invalid");
     }
 
+    return new Email({ value });
+  }
+
+  static fromString(value: string): Email {
     return new Email({ value });
   }
 }
