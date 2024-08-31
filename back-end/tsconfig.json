@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@common/*": ["./src/common/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@modules/*": ["./src/modules/*"]
+    }
+  }
+}

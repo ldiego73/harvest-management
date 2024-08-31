@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Fruit {
+  id        String    @id
+  name      String    @unique
+  varieties Variety[]
+  harvests  Harvest[]
+  Client    Client?   @relation(fields: [clientId], references: [id])
+  clientId  String?
+}
+
+model Variety {
+  id      String    @id
+  name    String    @unique
+  fruit   Fruit     @relation(fields: [fruitId], references: [id])
+  fruitId String
+  Harvest Harvest[]
+
+  @@unique([fruitId, name])
+}
+
+model Harvest {
+  id        String   @id
+  fruitId   String
+  varietyId String
+  farmerId  String
+  fieldId   String
+  clientId  String
+  quantity  Float
+  date      DateTime
+
+  fruit   Fruit   @relation(fields: [fruitId], references: [id])
+  variety Variety @relation(fields: [varietyId], references: [id])
+  farmer  Farmer  @relation(fields: [farmerId], references: [id])
+  field   Field   @relation(fields: [fieldId], references: [id])
+  client  Client  @relation(fields: [clientId], references: [id])
+}
+
+model Farmer {
+  id       String    @id
+  email    String    @unique
+  name     String
+  lastName String
+  fields   Field[]
+  harvests Harvest[]
+}
+
+model Field {
+  id       String    @id
+  name     String
+  location String
+  farmerId String
+  farmer   Farmer    @relation(fields: [farmerId], references: [id])
+  harvests Harvest[]
+
+  @@unique([name, location])
+}
+
+model Client {
+  id       String    @id
+  email    String    @unique
+  name     String
+  lastName String
+  Fruit    Fruit[]
+  Harvest  Harvest[]
+}
