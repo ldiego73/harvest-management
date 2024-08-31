@@ -1,10 +1,10 @@
-import { Exception } from "@common/exception";
 import { isNullOrUndefined } from "@common/helpers";
 import { Result, ok, err } from "@common/result";
 import { UniqueEntityId } from "@shared/domain";
 import { AggregateRoot } from "@shared/domain/aggregate-root";
 import { Email } from "@shared/domain/value-objects";
 
+import { ClientCreatedEvent, ClientUpdatedEvent } from "../events";
 import { ClientInvalidException } from "../exceptions";
 
 export type ClientProps = Readonly<{
@@ -30,10 +30,18 @@ export class Client extends AggregateRoot<ClientProps> {
     return this.props.lastName;
   }
 
+  created(): void {
+    this.addDomainEvent(new ClientCreatedEvent(this));
+  }
+
+  updated(): void {
+    this.addDomainEvent(new ClientUpdatedEvent(this));
+  }
+
   static create(
     props: ClientProps,
     id?: UniqueEntityId,
-  ): Result<Exception, Client> {
+  ): Result<ClientInvalidException, Client> {
     if (isNullOrUndefined(props.name) || props.name.trim() === "") {
       return err(
         new ClientInvalidException("NAME_REQUIRED", "Name is required"),

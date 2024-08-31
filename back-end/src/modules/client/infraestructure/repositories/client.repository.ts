@@ -23,6 +23,24 @@ export class ClientRepositoryImpl implements ClientRepository {
     });
   }
 
+  async findByEmail(email: string): Promise<Client | null> {
+    const raw = await prisma.client.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (raw === null) {
+      return null;
+    }
+
+    return Client.from(raw.id, {
+      email: Email.fromString(raw.email),
+      name: raw.name,
+      lastName: raw.lastName,
+    });
+  }
+
   async findAll(): Promise<Client[]> {
     const raw = await prisma.client.findMany();
 

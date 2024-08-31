@@ -7,6 +7,10 @@ export class Err<E, T = never> {
     this.error = error;
   }
 
+  get value(): T {
+    throw new Error("value is not defined");
+  }
+
   isErr(): this is Err<E, T> {
     return true;
   }

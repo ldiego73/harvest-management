@@ -1,12 +1,12 @@
 import { AggregateRoot, UniqueEntityId } from "@shared/domain";
-import { Exception } from "@common/exception";
 import { isNullOrUndefined } from "@common/helpers";
 import { Result, ok, err } from "@common/result";
 
 import { Email } from "@shared/domain/value-objects";
 
 import { Field } from "../entities";
-import { FieldInvalidException } from "../exceptions";
+import { FarmerCreatedEvent, FarmerUpdatedEvent } from "../events";
+import { FarmerInvalidException, FieldInvalidException } from "../exceptions";
 
 export type FarmerProps = {
   readonly email: Email;
@@ -40,7 +40,7 @@ export class Farmer extends AggregateRoot<FarmerProps> {
     this.props.fields = fields;
   }
 
-  addField(field: Field): Result<Exception, void> {
+  addField(field: Field): Result<FieldInvalidException, void> {
     if (
       this.fields.find(
         (f) => f.name === field.name && f.location === field.location,
@@ -59,7 +59,7 @@ export class Farmer extends AggregateRoot<FarmerProps> {
     return ok();
   }
 
-  removeField(field: Field): Result<Exception, void> {
+  removeField(field: Field): Result<FieldInvalidException, void> {
     if (
       !this.fields.find(
         (f) => f.name === field.name && f.location === field.location,
@@ -77,19 +77,27 @@ export class Farmer extends AggregateRoot<FarmerProps> {
     return ok();
   }
 
+  created(): void {
+    this.addDomainEvent(new FarmerCreatedEvent(this));
+  }
+
+  updated(): void {
+    this.addDomainEvent(new FarmerUpdatedEvent(this));
+  }
+
   static create(
     props: FarmerProps,
     id?: UniqueEntityId,
-  ): Result<Exception, Farmer> {
+  ): Result<FarmerInvalidException, Farmer> {
     if (isNullOrUndefined(props.name) || props.name.trim() === "") {
       return err(
-        new FieldInvalidException("NAME_REQUIRED", "Name is required"),
+        new FarmerInvalidException("NAME_REQUIRED", "Name is required"),
       );
     }
 
     if (isNullOrUndefined(props.lastName) || props.lastName.trim() === "") {
       return err(
-        new FieldInvalidException(
+        new FarmerInvalidException(
           "LAST_NAME_REQUIRED",
           "Last name is required",
         ),

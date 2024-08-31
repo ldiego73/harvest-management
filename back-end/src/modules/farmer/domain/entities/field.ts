@@ -1,5 +1,4 @@
 import { Entity, UniqueEntityId } from "@shared/domain";
-import { Exception } from "@common/exception";
 import { isNullOrUndefined } from "@common/helpers";
 import { Result, ok, err } from "@common/result";
 
@@ -31,7 +30,7 @@ export class Field extends Entity<FieldProps> {
   static create(
     props: FieldProps,
     id?: UniqueEntityId,
-  ): Result<Exception, Field> {
+  ): Result<FieldInvalidException, Field> {
     if (isNullOrUndefined(props.name) || props.name.trim() === "") {
       return err(
         new FieldInvalidException("NAME_REQUIRED", "Name is required"),

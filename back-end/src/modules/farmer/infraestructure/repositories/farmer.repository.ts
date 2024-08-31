@@ -87,38 +87,42 @@ export class FarmerRepositoryImpl implements FarmerRepository {
   }
 
   async save(farmer: Farmer): Promise<Farmer> {
-    const rawFarmer = await prisma.farmer.create({
-      data: {
-        id: farmer.id.toString(),
-        email: farmer.email.value,
-        name: farmer.name,
-        lastName: farmer.lastName,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const rawFarmer = await tx.farmer.create({
+        data: {
+          id: farmer.id.toString(),
+          email: farmer.email.value,
+          name: farmer.name,
+          lastName: farmer.lastName,
+        },
+      });
+
+      await tx.field.createMany({
+        data: farmer.fields.map((field) => {
+          return {
+            id: field.id.toString(),
+            name: field.name,
+            location: field.location,
+            farmerId: rawFarmer.id,
+          };
+        }),
+      });
+
+      return Farmer.from(rawFarmer.id, {
+        email: Email.fromString(rawFarmer.email),
+        name: rawFarmer.name,
+        lastName: rawFarmer.lastName,
+        fields: farmer.fields.map((item) => {
+          return Field.from(item.id.toString(), {
+            name: item.name,
+            location: item.location,
+            farmerId: item.farmerId,
+          });
+        }),
+      });
     });
 
-    await prisma.field.createMany({
-      data: farmer.fields.map((field) => {
-        return {
-          id: field.id.toString(),
-          name: field.name,
-          location: field.location,
-          farmerId: rawFarmer.id,
-        };
-      }),
-    });
-
-    return Farmer.from(rawFarmer.id, {
-      email: Email.fromString(rawFarmer.email),
-      name: rawFarmer.name,
-      lastName: rawFarmer.lastName,
-      fields: farmer.fields.map((item) => {
-        return Field.from(item.id.toString(), {
-          name: item.name,
-          location: item.location,
-          farmerId: item.farmerId,
-        });
-      }),
-    });
+    return result;
   }
 
   async update(farmer: Farmer, farmerId: string): Promise<Farmer> {

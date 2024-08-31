@@ -52,32 +52,36 @@ export class FruitRepositoryImpl implements FruitRepository {
   }
 
   async save(fruit: Fruit): Promise<Fruit> {
-    const raw = await prisma.fruit.create({
-      data: {
-        id: fruit.id.toString(),
-        name: fruit.name,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const raw = await prisma.fruit.create({
+        data: {
+          id: fruit.id.toString(),
+          name: fruit.name,
+        },
+      });
+
+      await prisma.variety.createMany({
+        data: fruit.varieties.map((variety) => {
+          return {
+            id: variety.id.toString(),
+            name: variety.name,
+            fruitId: raw.id,
+          };
+        }),
+      });
+
+      return Fruit.from(raw.id, {
+        name: raw.name,
+        varieties: fruit.varieties.map((item) => {
+          return Variety.from(item.id.toString(), {
+            name: item.name,
+            fruitId: item.fruitId,
+          });
+        }),
+      });
     });
 
-    await prisma.variety.createMany({
-      data: fruit.varieties.map((variety) => {
-        return {
-          id: variety.id.toString(),
-          name: variety.name,
-          fruitId: raw.id,
-        };
-      }),
-    });
-
-    return Fruit.from(raw.id, {
-      name: raw.name,
-      varieties: fruit.varieties.map((item) => {
-        return Variety.from(item.id.toString(), {
-          name: item.name,
-          fruitId: item.fruitId,
-        });
-      }),
-    });
+    return result;
   }
 
   async update(fruit: Fruit, fruitId: string): Promise<Fruit> {
