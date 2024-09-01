@@ -107,6 +107,29 @@ export class HarvestRepositoryImpl implements HarvestRepository {
     });
   }
 
+  async findByDates(startDate: Date, endDate: Date): Promise<Harvest[]> {
+    const raw = await prisma.harvest.findMany({
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+    });
+
+    return raw.map((item) => {
+      return Harvest.from(item.id, {
+        fruitId: new UniqueEntityId(item.fruitId),
+        varietyId: new UniqueEntityId(item.varietyId),
+        farmerId: new UniqueEntityId(item.farmerId),
+        fieldId: new UniqueEntityId(item.fieldId),
+        clientId: new UniqueEntityId(item.clientId),
+        quantity: item.quantity,
+        date: item.date,
+      });
+    });
+  }
+
   async findAll(): Promise<Harvest[]> {
     const raw = await prisma.harvest.findMany();
 

@@ -2,9 +2,9 @@ import { isNullOrUndefined } from "@common/helpers";
 import { Result, ok, err } from "@common/result";
 import { UniqueEntityId } from "@shared/domain";
 import { AggregateRoot } from "@shared/domain/aggregate-root";
-import { Exception } from "@common/exception";
 
 import { Variety } from "../entities";
+import { FruitCreatedEvent, FruitUpdatedEvent } from "../events";
 import { FruitInvalidException } from "../exceptions";
 
 export type FruitProps = {
@@ -25,6 +25,10 @@ export class Fruit extends AggregateRoot<FruitProps> {
     return this.props.varieties;
   }
 
+  set varieties(varieties: Variety[]) {
+    this.props.varieties = varieties;
+  }
+
   addVairiety(variety: Variety): Result<Exception, void> {
     if (this.varieties.find((v) => v.name === variety.name)) {
       return err(
@@ -40,7 +44,7 @@ export class Fruit extends AggregateRoot<FruitProps> {
     return ok();
   }
 
-  removeVariety(variety: Variety): Result<Exception, void> {
+  removeVariety(variety: Variety): Result<FruitInvalidException, void> {
     if (!this.varieties.find((v) => v.name === variety.name)) {
       return err(
         new FruitInvalidException(
@@ -57,10 +61,18 @@ export class Fruit extends AggregateRoot<FruitProps> {
     return ok();
   }
 
+  created(): void {
+    this.addDomainEvent(new FruitCreatedEvent(this));
+  }
+
+  updated(): void {
+    this.addDomainEvent(new FruitUpdatedEvent(this));
+  }
+
   static create(
     props: FruitProps,
     id?: UniqueEntityId,
-  ): Result<Exception, Fruit> {
+  ): Result<FruitInvalidException, Fruit> {
     if (isNullOrUndefined(props.name) || props.name.trim() === "") {
       return err(
         new FruitInvalidException("NAME_REQUIRED", "Name is required"),

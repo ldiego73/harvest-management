@@ -31,6 +31,31 @@ export class FruitRepositoryImpl implements FruitRepository {
     });
   }
 
+  async findByName(name: string): Promise<Fruit | null> {
+    const raw = await prisma.fruit.findUnique({
+      where: {
+        name: name,
+      },
+      include: {
+        varieties: true,
+      },
+    });
+
+    if (raw === null) {
+      return null;
+    }
+
+    return Fruit.from(raw.id, {
+      name: raw.name,
+      varieties: raw.varieties.map((item) => {
+        return Variety.from(item.id, {
+          name: item.name,
+          fruitId: new UniqueEntityId(item.fruitId),
+        });
+      }),
+    });
+  }
+
   async findAll(): Promise<Fruit[]> {
     const raw = await prisma.fruit.findMany({
       include: {

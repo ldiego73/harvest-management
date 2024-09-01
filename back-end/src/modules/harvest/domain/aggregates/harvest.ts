@@ -1,8 +1,8 @@
 import { AggregateRoot, UniqueEntityId } from "@shared/domain";
-import { Exception } from "@common/exception";
 import { isNullOrUndefined } from "@common/helpers";
 import { Result, err, ok } from "@common/result";
 
+import { HarvestCreatedEvent } from "../events";
 import { HarvestInvalidException } from "../exceptions";
 
 export type HarvestProps = Readonly<{
@@ -48,10 +48,14 @@ export class Harvest extends AggregateRoot<HarvestProps> {
     return this.props.date;
   }
 
+  created(): void {
+    this.addDomainEvent(new HarvestCreatedEvent(this.props));
+  }
+
   static create(
     props: HarvestProps,
     id?: UniqueEntityId,
-  ): Result<Exception, Harvest> {
+  ): Result<HarvestInvalidException, Harvest> {
     if (isNullOrUndefined(props.fruitId)) {
       return err(
         new HarvestInvalidException(
@@ -109,6 +113,33 @@ export class Harvest extends AggregateRoot<HarvestProps> {
     if (isNullOrUndefined(props.date)) {
       return err(
         new HarvestInvalidException("DATE_REQUIRED", "Date is required"),
+      );
+    }
+
+    if (props.quantity <= 0) {
+      return err(
+        new HarvestInvalidException(
+          "QUANTITY_MUST_BE_POSITIVE",
+          "Quantity must be positive",
+        ),
+      );
+    }
+
+    if (props.quantity > 100) {
+      return err(
+        new HarvestInvalidException(
+          "QUANTITY_MUST_BE_LESS_THAN_100",
+          "Quantity must be less than 100",
+        ),
+      );
+    }
+
+    if (props.date.getTime() < new Date().getTime()) {
+      return err(
+        new HarvestInvalidException(
+          "DATE_MUST_BE_IN_FUTURE",
+          "Date must be in future",
+        ),
       );
     }
 

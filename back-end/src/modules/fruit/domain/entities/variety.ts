@@ -1,5 +1,4 @@
 import { Entity, UniqueEntityId } from "@shared/domain";
-import { Exception } from "@common/exception";
 import { isNullOrUndefined } from "@common/helpers";
 import { Result, ok, err } from "@common/result";
 
@@ -26,7 +25,7 @@ export class Variety extends Entity<VarietyProps> {
   static create(
     props: VarietyProps,
     id?: UniqueEntityId,
-  ): Result<Exception, Variety> {
+  ): Result<VarietyInvalidException, Variety> {
     if (isNullOrUndefined(props.name) || props.name.trim() === "") {
       return err(
         new VarietyInvalidException("NAME_REQUIRED", "Name is required"),
