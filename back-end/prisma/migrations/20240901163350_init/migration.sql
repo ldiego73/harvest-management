@@ -1,9 +1,7 @@
 -- CreateTable
 CREATE TABLE "Fruit" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "clientId" TEXT,
-    CONSTRAINT "Fruit_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    "name" TEXT NOT NULL
 );
 
 -- CreateTable
