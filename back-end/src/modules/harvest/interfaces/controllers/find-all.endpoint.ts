@@ -3,6 +3,7 @@ import { BaseController, Controller, Get } from "@shared/interface";
 import { Context } from "elysia";
 
 import { FindAllQueryHandler } from "../../application";
+import { HarvestsListResponseDto } from "../dtos";
 
 @Controller("/harvests", "Harvests")
 export class FindAllHarvestEndpoint extends BaseController {
@@ -10,7 +11,11 @@ export class FindAllHarvestEndpoint extends BaseController {
     super();
   }
 
-  @Get({ path: "/", description: "Find all" })
+  @Get({
+    path: "/",
+    description: "Find all",
+    response: HarvestsListResponseDto,
+  })
   async index(ctx: Context) {
     const resultOrError = await this.queryHandler.handle();
 

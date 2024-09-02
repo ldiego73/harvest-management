@@ -2,6 +2,7 @@ import { BaseController, Controller, Get } from "@shared/interface";
 
 import { Context } from "elysia";
 
+import { HarvestResponseDto } from "../dtos";
 import { FindByIdQueryHandler } from "../../application";
 
 type IndexRoute = {
@@ -16,7 +17,11 @@ export class FindByIdHarvestEndpoint extends BaseController {
     super();
   }
 
-  @Get({ path: "/:id", description: "Find by id" })
+  @Get({
+    path: "/:id",
+    description: "Find by id",
+    response: HarvestResponseDto,
+  })
   async index(ctx: Context<IndexRoute>) {
     const { id } = ctx.params;
     const resultOrError = await this.queryHandler.handle({

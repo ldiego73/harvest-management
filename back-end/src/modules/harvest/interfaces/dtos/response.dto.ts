@@ -10,3 +10,5 @@ export const HarvestResponseDto = t.Object({
   quantity: t.Number(),
   date: t.String({ format: "date-time" }),
 });
+
+export const HarvestsListResponseDto = t.Array(HarvestResponseDto);
