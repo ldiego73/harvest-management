@@ -3,19 +3,18 @@ import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
 import { opentelemetry } from "@elysiajs/opentelemetry";
 
-import {
-  BatchSpanProcessor,
-  ConsoleSpanExporter,
-} from "@opentelemetry/sdk-trace-node";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 
 import { Application } from "@shared/interface/application";
-import { loggerMiddleware } from "@middlewares/index";
+import { loggerMiddleware, exceptionMiddleware } from "@middlewares/index";
 
 import { Elysia } from "elysia";
 import { compression } from "elysia-compression";
 import { helmet } from "elysia-helmet";
 import { rateLimit } from "elysia-rate-limit";
+
+import { decoratorRoutes } from "./routes";
 
 export class Microservice implements Application {
   protected app: Elysia | undefined;
@@ -79,8 +78,8 @@ export class Microservice implements Application {
                 description: "API for the task of Farmers",
               },
               {
-                name: "Customers",
-                description: "API for the task of Customers",
+                name: "Clients",
+                description: "API for the task of Clients",
               },
             ],
           },
@@ -88,24 +87,29 @@ export class Microservice implements Application {
       )
       .use(
         opentelemetry({
-          spanProcessors: [
-            new BatchSpanProcessor(new OTLPTraceExporter({})),
-            new BatchSpanProcessor(new ConsoleSpanExporter()),
-          ],
+          spanProcessors: [new BatchSpanProcessor(new OTLPTraceExporter({}))],
         }),
       );
   }
 
   private loadMiddlewares(app: Elysia) {
-    app.use(loggerMiddleware({ name: "microservice" }));
+    exceptionMiddleware(app);
+    loggerMiddleware({ app, name: "microservice" });
+  }
+
+  private loadRoutes(app: Elysia) {
+    app.use(decoratorRoutes);
   }
 
   start() {
     const port = process.env.PORT || 3000;
 
-    this.app = new Elysia().get("/", () => "Hello World!");
+    this.app = new Elysia();
+
     this.loadPlugins(this.app);
     this.loadMiddlewares(this.app);
+    this.loadRoutes(this.app);
+
     this.app.listen(port, (server) => {
       console.log(`🦊 Elysia is running at ${server.hostname}:${server.port}`);
     });

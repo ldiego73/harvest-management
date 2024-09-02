@@ -1,7 +1,7 @@
 import { Result, ok, err } from "@common/result";
-import { ClientRepository } from "@modules/client/domain/repositories";
+import { type ClientRepository } from "@modules/client/domain/repositories";
 import {
-  Command,
+  type Command,
   CommandHandler,
   CommandHandlerException,
 } from "@shared/application";

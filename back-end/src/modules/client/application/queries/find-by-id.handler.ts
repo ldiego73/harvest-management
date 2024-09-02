@@ -1,5 +1,9 @@
-import { QueryHandler, QueryHandlerException } from "@shared/application";
-import { ClientRepository } from "@modules/client/domain/repositories";
+import {
+  type Query,
+  QueryHandler,
+  QueryHandlerException,
+} from "@shared/application";
+import { type ClientRepository } from "@modules/client/domain/repositories";
 import { Client } from "@modules/client/domain/aggregates";
 
 import { Result, err, ok } from "@common/result";
@@ -7,7 +11,7 @@ import { ClientNotFoundException } from "../exceptions";
 
 type Response = Result<ClientNotFoundException | QueryHandlerException, Client>;
 
-export interface FindByIdQuery {
+export interface FindByIdQuery extends Query {
   id: string;
 }
 

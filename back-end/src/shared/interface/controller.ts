@@ -9,7 +9,7 @@ import {
 } from "@common/http.exception";
 import { Logger } from "@common/logger";
 
-export class Controller {
+export class BaseController {
   readonly logger = Logger.create(this.constructor.name);
 
   constructor() {}

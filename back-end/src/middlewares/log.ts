@@ -3,17 +3,23 @@ import { Logger } from "@common/logger";
 import { Elysia } from "elysia";
 
 type LoggerMiddlewareOptions = {
+  app: Elysia;
   name: string;
 };
 
 export function loggerMiddleware(options: LoggerMiddlewareOptions) {
   const logger = Logger.create(options.name);
 
-  return new Elysia()
+  options.app
     .onRequest(({ request }) => {
       logger.info(`Request: ${request.method} ${request.url}`);
     })
-    .onAfterResponse(({ request, response }) => {
+    .onAfterHandle(({ request }) => {
+      logger.info(
+        `Handle: ${request.method} ${request.url} in ${performance.now()}ms`,
+      );
+    })
+    .onAfterResponse(({ request }) => {
       logger.info(
         `Response: ${request.method} ${request.url} in ${performance.now()}ms`,
       );

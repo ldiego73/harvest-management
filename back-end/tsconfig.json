@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
+    "experimentalDecorators": true,
     "paths": {
       "@common/*": ["./src/common/*"],
       "@shared/*": ["./src/shared/*"],

@@ -1,7 +1,7 @@
 import { Result, ok, err } from "@common/result";
-import { ClientRepository } from "@modules/client/domain/repositories";
+import { type ClientRepository } from "@modules/client/domain/repositories";
 import {
-  Command,
+  type Command,
   CommandHandler,
   CommandHandlerException,
 } from "@shared/application";
@@ -77,6 +77,10 @@ export class UpdateClientCommandHandler extends CommandHandler<
 
       return ok();
     } catch (error: any) {
+      if (error.code === "P2025") {
+        return err(new ClientNotFoundException("Client not found"));
+      }
+
       return err(CommandHandlerException.create(error.message));
     }
   }

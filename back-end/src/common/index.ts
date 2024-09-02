@@ -1,3 +1,4 @@
+export * from "./di";
 export * from "./event-bus";
 export * from "./exception";
 export * from "./helpers";
