@@ -10,7 +10,11 @@ import {
 
 import { Elysia } from "elysia";
 
-const controllers = [...clientControllers, ...harvestControllers];
+const controllers = [
+  ...clientControllers,
+  ...harvestControllers,
+  ...farmerControllers,
+];
 
 export function decoratorRoutes(app: Elysia) {
   controllers.forEach((controller) => {

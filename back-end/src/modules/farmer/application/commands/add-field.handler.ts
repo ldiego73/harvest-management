@@ -26,7 +26,7 @@ export class AddFieldCommandHandler extends CommandHandler<
   AddFieldCommand,
   Response
 > {
-  private constructor(private readonly repository: FieldRepository) {
+  constructor(private readonly repository: FieldRepository) {
     super();
   }
 

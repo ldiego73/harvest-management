@@ -1,16 +1,17 @@
 import { Result, err, ok } from "@common/result";
-import { QueryHandler, QueryHandlerException } from "@shared/application";
+import {
+  Query,
+  QueryHandler,
+  QueryHandlerException,
+} from "@shared/application";
 import { FieldRepository } from "@modules/farmer/domain/repositories";
 import { Field } from "@modules/farmer/domain/entities";
 
 type Response = Result<QueryHandlerException, Field[]>;
 
-export interface FiendAllField {}
+export interface FindAllField extends Query {}
 
-export class FiendAllFieldHandler extends QueryHandler<
-  FiendAllField,
-  Response
-> {
+export class FindAllFieldHandler extends QueryHandler<FindAllField, Response> {
   constructor(private readonly repository: FieldRepository) {
     super();
   }

@@ -2,10 +2,11 @@ import { Result, err, ok } from "@common/result";
 import { QueryHandler, QueryHandlerException } from "@shared/application";
 import { FarmerRepository } from "@modules/farmer/domain/repositories";
 import { Farmer } from "@modules/farmer/domain/aggregates";
+import { Query } from "@shared/application";
 
 type Response = Result<QueryHandlerException, Farmer[]>;
 
-export interface FindAllFarmer {}
+export interface FindAllFarmer extends Query {}
 
 export class FindAllFarmerHandler extends QueryHandler<
   FindAllFarmer,

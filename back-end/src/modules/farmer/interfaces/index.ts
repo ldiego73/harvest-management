@@ -1,1 +1,1 @@
-export const farmerControllers = [];
+export * from "./controllers";

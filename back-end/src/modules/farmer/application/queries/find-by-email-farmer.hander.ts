@@ -3,10 +3,11 @@ import { QueryHandler, QueryHandlerException } from "@shared/application";
 import { FarmerRepository } from "@modules/farmer/domain/repositories";
 import { Farmer } from "@modules/farmer/domain/aggregates";
 import { FarmerNotFoundException } from "../exceptions";
+import { Query } from "@shared/application";
 
 type Response = Result<FarmerNotFoundException | QueryHandlerException, Farmer>;
 
-export interface FindByEmailFarmer {
+export interface FindByEmailFarmer extends Query {
   email: string;
 }
 

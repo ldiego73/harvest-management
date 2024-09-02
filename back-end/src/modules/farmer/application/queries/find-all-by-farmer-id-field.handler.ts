@@ -2,14 +2,15 @@ import { Result, err, ok } from "@common/result";
 import { QueryHandler, QueryHandlerException } from "@shared/application";
 import { FieldRepository } from "@modules/farmer/domain/repositories";
 import { Field } from "@modules/farmer/domain/entities";
+import { Query } from "@shared/application";
 
 type Response = Result<QueryHandlerException, Field[]>;
 
-export interface FindAllByFamerIdFieldQuery {
+export interface FindAllByFamerIdFieldQuery extends Query {
   id: string;
 }
 
-export class FindAllByFamerIdFieldQueryHandler extends QueryHandler<
+export class FindAllByFamerIdFieldHandler extends QueryHandler<
   FindAllByFamerIdFieldQuery,
   Response
 > {

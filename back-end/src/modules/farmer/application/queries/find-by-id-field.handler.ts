@@ -3,10 +3,11 @@ import { QueryHandler, QueryHandlerException } from "@shared/application";
 import { FieldRepository } from "@modules/farmer/domain/repositories";
 import { Field } from "@modules/farmer/domain/entities";
 import { FieldNotFoundException } from "../exceptions";
+import { Query } from "@shared/application";
 
 type Response = Result<FieldNotFoundException | QueryHandlerException, Field>;
 
-export interface FindByIdField {
+export interface FindByIdField extends Query {
   id: string;
 }
 

@@ -33,7 +33,7 @@ export class UpdateFieldCommandHandler extends CommandHandler<
   UpdateFieldCommand,
   Response
 > {
-  private constructor(private readonly repository: FieldRepository) {
+  constructor(private readonly repository: FieldRepository) {
     super();
   }
 
