@@ -14,6 +14,7 @@ const controllers = [
   ...clientControllers,
   ...harvestControllers,
   ...farmerControllers,
+  ...fruitControllers,
 ];
 
 export function decoratorRoutes(app: Elysia) {

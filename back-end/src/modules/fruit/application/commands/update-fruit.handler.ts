@@ -29,7 +29,6 @@ export interface UpdateFruitCommand extends Command {
     name: string;
   }[];
 }
-}
 
 export class UpdateFruitCommandHandler extends CommandHandler<
   UpdateFruitCommand,

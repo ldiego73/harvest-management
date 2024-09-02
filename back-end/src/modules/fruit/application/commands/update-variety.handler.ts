@@ -32,7 +32,7 @@ export class UpdateVarietyCommandHandler extends CommandHandler<
   UpdateVarietyCommand,
   Response
 > {
-  private constructor(private readonly repository: VarietyRepository) {
+  constructor(private readonly repository: VarietyRepository) {
     super();
   }
 

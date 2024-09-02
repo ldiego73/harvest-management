@@ -27,7 +27,7 @@ export class AddVarietyCommandHandler extends CommandHandler<
   AddVarietyCommand,
   Response
 > {
-  private constructor(private readonly repository: VarietyRepository) {
+  constructor(private readonly repository: VarietyRepository) {
     super();
   }
 
@@ -42,9 +42,7 @@ export class AddVarietyCommandHandler extends CommandHandler<
       );
 
       if (typeof existingVariety !== "undefined") {
-        return err(
-          new VarietydAlreadyExistsException("Variety already exists"),
-        );
+        return err(new VarietyAlreadyExistsException("Variety already exists"));
       }
 
       const varietyOrError = Variety.create({

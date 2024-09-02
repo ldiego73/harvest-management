@@ -1,1 +1,1 @@
-export const fruitControllers = [];
+export * from "./controllers";
