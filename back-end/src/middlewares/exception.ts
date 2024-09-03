@@ -1,3 +1,4 @@
+import { HttpStatus } from "@common/http-status";
 import { HttpResponseException } from "@common/http.exception";
 import { Elysia, t } from "elysia";
 
@@ -19,6 +20,16 @@ export function exceptionMiddleware(app: Elysia) {
         status: 400,
         code: "INTERNAL_SERVER_ERROR",
         message: JSON.parse(error.message),
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    const errorCode = (error as any).code as keyof typeof HttpStatus;
+
+    if (!!errorCode) {
+      return {
+        status: HttpStatus[errorCode],
+        code: HttpStatus[HttpStatus[errorCode]],
         timestamp: new Date().toISOString(),
       };
     }
