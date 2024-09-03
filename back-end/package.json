@@ -2,11 +2,11 @@
   "name": "tarea-back-end",
   "version": "1.0.0",
   "description": "Tarea de Back-End",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "bun --watch src/index.ts",
-    "build": "bun build src/index.ts",
-    "start": "NODE_ENV=production bun src/index.ts",
+    "build": "bun build src/index.ts --target=bun --outfile=./dist/index.js",
+    "start": "NODE_ENV=production bun dist/index.js",
     "test": "bun test"
   },
   "keywords": [],
