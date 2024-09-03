@@ -7,6 +7,7 @@
     import Button from "../../../components/Button.svelte";
 
     import type { SelectOption } from "$lib/types";
+    import { harvestSchema, type HarvestFormData } from "$lib/schemas";
 
     import {
         createHarvest,
@@ -15,22 +16,26 @@
         getClients,
     } from "$lib/api";
 
+    import { z } from "zod";
+
     let growers: SelectOption[] = [];
     let farms: SelectOption[] = [];
     let clients: SelectOption[] = [];
     let commodities: SelectOption[] = [];
     let varieties: SelectOption[] = [];
 
-    let selectedGrower = "";
-    let selectedFarm = "";
-    let selectedClient = "";
-    let selectedCommodity = "";
-    let selectedVariety = "";
-    let quantity = "";
-    let confirmCreation = false;
+    let formData: HarvestFormData = {
+        growerId: "",
+        farmId: "",
+        clientId: "",
+        commodityId: "",
+        varietyId: "",
+        quantity: 0,
+        confirmCreation: false,
+    };
 
     let loading = true;
-    let error = "";
+    let errors: { [key: string]: string } = {};
 
     onMount(async () => {
         try {
@@ -62,25 +67,26 @@
                 })),
             }));
         } catch (e: any) {
-            error = e.message;
+            errors.fetch = e.message;
         } finally {
             loading = false;
         }
     });
 
     function handleGrowerChange(newValue: string) {
-        selectedGrower = newValue;
-        const grower = growers.find((g) => g.value === selectedGrower);
+        formData.growerId = newValue;
+        const grower = growers.find((g) => g.value === formData.growerId);
         farms = grower
             ? grower.farms.map((f: any) => ({ value: f.id, label: f.name }))
             : [];
-        selectedFarm = "";
+        formData.farmId = "";
+        console.log(farms);
     }
 
     function handleCommodityChange(newValue: string) {
-        selectedCommodity = newValue;
+        formData.commodityId = newValue;
         const commodity = commodities.find(
-            (c) => c.value === selectedCommodity,
+            (c) => c.value === formData.commodityId,
         );
         varieties = commodity
             ? commodity.varieties.map((v: any) => ({
@@ -88,36 +94,29 @@
                   label: v.name,
               }))
             : [];
-        selectedVariety = "";
+        formData.varietyId = "";
     }
 
     async function handleSubmit() {
-        if (
-            !selectedGrower ||
-            !selectedFarm ||
-            !selectedClient ||
-            !selectedCommodity ||
-            !selectedVariety ||
-            !quantity ||
-            !confirmCreation
-        ) {
-            error = "Please fill in all fields and confirm creation";
-            return;
-        }
+        errors = {};
 
         try {
-            await createHarvest({
-                growerId: selectedGrower,
-                farmId: selectedFarm,
-                clientId: selectedClient,
-                commodityId: selectedCommodity,
-                varietyId: selectedVariety,
-                quantity: Number.parseInt(quantity, 10),
-            });
+            if (typeof formData.quantity === "string") {
+                formData.quantity = Number.parseInt(formData.quantity, 10);
+            }
+
+            const validatedData = harvestSchema.parse(formData);
+            await createHarvest(validatedData);
 
             goto("/harvests");
-        } catch (e: any) {
-            error = e.message;
+        } catch (error: any) {
+            if (error instanceof z.ZodError) {
+                error.errors.forEach((err) => {
+                    errors[err.path[0]] = err.message;
+                });
+            } else {
+                errors.submit = "An unexpected error occurred";
+            }
         }
     }
 </script>
@@ -131,73 +130,84 @@
 
     {#if loading}
         <p>Loading form data...</p>
-    {:else if error}
-        <p class="text-red-500 mb-4">{error}</p>
+    {:else if errors.fetch}
+        <p class="text-red-500 mb-4">{errors.fetch}</p>
     {:else}
         <form on:submit|preventDefault={handleSubmit} class="space-y-4">
             <Select
                 options={growers}
-                value={selectedGrower}
+                value={formData.growerId}
                 onChange={handleGrowerChange}
                 label="Grower"
                 name="grower"
                 placeholder="Select a grower"
+                error={errors.growerId}
             />
 
             <Select
                 options={farms}
-                value={selectedFarm}
-                onChange={(newValue) => (selectedFarm = newValue)}
+                value={formData.farmId}
+                onChange={(newValue) => (formData.farmId = newValue)}
                 label="Farm"
                 name="farm"
                 placeholder="Select a farm"
-                disabled={!selectedGrower}
+                disabled={!formData.growerId}
+                error={errors.farmId}
             />
 
             <Select
                 options={clients}
-                value={selectedClient}
-                onChange={(newValue) => (selectedClient = newValue)}
+                value={formData.clientId}
+                onChange={(newValue) => (formData.clientId = newValue)}
                 label="Client"
                 name="client"
                 placeholder="Select a client"
+                error={errors.clientId}
             />
 
             <Select
                 options={commodities}
-                value={selectedCommodity}
+                value={formData.commodityId}
                 onChange={handleCommodityChange}
                 label="Commodity"
                 name="commodity"
                 placeholder="Select a commodity"
+                error={errors.commodityId}
             />
 
             <Select
                 options={varieties}
-                value={selectedVariety}
-                onChange={(newValue) => (selectedVariety = newValue)}
+                value={formData.varietyId}
+                onChange={(newValue) => (formData.varietyId = newValue)}
                 label="Variety"
                 name="variety"
                 placeholder="Select a variety"
-                disabled={!selectedCommodity}
+                disabled={!formData.commodityId}
+                error={errors.varietyId}
             />
 
             <Input
                 type="number"
                 label="Quantity"
                 name="quantity"
-                bind:value={quantity}
+                bind:value={formData.quantity}
                 placeholder="Enter quantity"
+                error={errors.quantity}
             />
 
             <Checkbox
                 label="I confirm that all information is correct"
-                bind:checked={confirmCreation}
+                bind:checked={formData.confirmCreation}
+                error={errors.confirmCreation}
             />
 
-            <Button type="submit" disabled={!confirmCreation}
+            <Button type="submit" disabled={!formData.confirmCreation}
                 >Create Harvest</Button
             >
+
+            {#if errors.submit}
+                <p class="text-red-500 mt-4">{errors.submit}</p>
+            {/if}
         </form>
     {/if}
 </div>
