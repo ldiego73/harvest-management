@@ -3,6 +3,8 @@ import {
   FindByIdQueryHandler,
   AddClientCommandHandler,
   UpdateClientCommandHandler,
+  ClientCreatedEventHandler,
+  ClientUpdatedEventHandler,
 } from "./application";
 import { ClientRepositoryImpl } from "./infraestructure";
 import {
@@ -24,6 +26,9 @@ const addClientEndpoint = new AddClientEndpoint(addClientCommandHandler);
 const updateClientEndpoint = new UpdateClientEndpoint(
   updateClientCommandHandler,
 );
+
+new ClientCreatedEventHandler();
+new ClientUpdatedEventHandler();
 
 export const clientControllers = [
   findAllEndpoint,

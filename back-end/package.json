@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "bun-types": "^1.1.26",
-    "prisma": "^5.19.0"
+    "prisma": "^5.19.0",
+    "reflect-metadata": "^0.2.2"
   }
 }
