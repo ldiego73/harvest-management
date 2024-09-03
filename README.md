@@ -33,7 +33,7 @@ bun dev
 ### Frontend
 
 ```bash
-cd frontend
+cd fron-tend
 bun dev
 ```
 

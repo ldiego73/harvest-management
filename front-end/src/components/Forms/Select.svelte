@@ -74,6 +74,7 @@
     <div class={selectClass}>
         <button
             type="button"
+            id={name}
             on:click={toggleDropdown}
             class="w-full flex items-center justify-between"
             {disabled}
@@ -90,6 +91,7 @@
                 class="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
                 tabindex="-1"
                 role="listbox"
+                aria-labelledby={name}
             >
                 {#each options as option (option.value)}
                     <li
