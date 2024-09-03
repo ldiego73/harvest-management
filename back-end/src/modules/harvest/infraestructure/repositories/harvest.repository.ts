@@ -170,4 +170,97 @@ export class HarvestRepositoryImpl implements HarvestRepository {
       date: raw.date,
     });
   }
+
+  async upload(rows: any[]): Promise<void> {
+    const result = await prisma.$transaction(async (tx) => {
+      for (const row of rows) {
+        const {
+          farmerEmail,
+          farmerName,
+          farmerLastName,
+          clientEmail,
+          clientName,
+          clientLastName,
+          fieldName,
+          fieldLocation,
+          fruitName,
+          varietyName,
+        } = row;
+
+        const farmer = await tx.farmer.upsert({
+          where: { email: farmerEmail },
+          update: { name: farmerName, lastName: farmerLastName },
+          create: {
+            id: new UniqueEntityId().toString(),
+            email: farmerEmail,
+            name: farmerName,
+            lastName: farmerLastName,
+          },
+        });
+
+        const client = await tx.client.upsert({
+          where: { email: clientEmail },
+          update: { name: clientName, lastName: clientLastName },
+          create: {
+            id: new UniqueEntityId().toString(),
+            email: clientEmail,
+            name: clientName,
+            lastName: clientLastName,
+          },
+        });
+
+        const field = await tx.field.upsert({
+          where: {
+            name_location: {
+              name: fieldName,
+              location: fieldLocation,
+            },
+          },
+          update: { farmerId: farmer.id },
+          create: {
+            id: new UniqueEntityId().toString(),
+            name: fieldName,
+            location: fieldLocation,
+            farmerId: farmer.id,
+          },
+        });
+
+        const fruit = await tx.fruit.upsert({
+          where: { name: fruitName },
+          update: {},
+          create: {
+            id: new UniqueEntityId().toString(),
+            name: fruitName,
+          },
+        });
+
+        const variety = await tx.variety.upsert({
+          where: {
+            fruitId_name: { fruitId: fruit.id, name: varietyName },
+          },
+          update: {},
+          create: {
+            id: new UniqueEntityId().toString(),
+            fruitId: fruit.id,
+            name: varietyName,
+          },
+        });
+
+        await tx.harvest.create({
+          data: {
+            id: new UniqueEntityId().toString(),
+            fruitId: fruit.id,
+            varietyId: variety.id,
+            farmerId: farmer.id,
+            fieldId: field.id,
+            clientId: client.id,
+            quantity: 1,
+            date: new Date(),
+          },
+        });
+      }
+    });
+
+    return result;
+  }
 }

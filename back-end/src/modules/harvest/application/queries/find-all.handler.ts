@@ -15,7 +15,6 @@ export class FindAllQueryHandler extends QueryHandler<FindAllQuery, Response> {
   async handle(): Promise<Response> {
     try {
       const harvests = await this.repository.findAll();
-
       return ok(harvests);
     } catch (error: any) {
       return err(QueryHandlerException.create(error.message));

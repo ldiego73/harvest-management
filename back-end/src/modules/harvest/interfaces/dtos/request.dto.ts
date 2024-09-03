@@ -13,3 +13,7 @@ export const HarvestRequestDto = t.Object({
 export const HarvestIdParamsDto = t.Object({
   id: t.String({ minLength: 24 }),
 });
+
+export const HarvestImportRequestDto = t.Object({
+  file: t.File(),
+});

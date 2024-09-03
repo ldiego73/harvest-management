@@ -7,6 +7,7 @@ export interface HarvestRepository {
   findAllByClientId(id: string): Promise<Harvest[]>;
   findByDates(startDate: Date, endDate: Date): Promise<Harvest[]>;
   findAll(): Promise<Harvest[]>;
+  upload(rows: any[]): Promise<void>;
 
   save(harvest: Harvest): Promise<Harvest>;
 }

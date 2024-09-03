@@ -41,6 +41,7 @@ export class FindAllByDatesHarvestEndpoint extends BaseController {
     ctx.set.headers["Content-Type"] = "application/json";
 
     return resultOrError.value.map((harvest) => ({
+      id: harvest.id.toValue(),
       fruitId: harvest.fruitId.toValue(),
       varietyId: harvest.varietyId.toValue(),
       farmerId: harvest.farmerId.toValue(),

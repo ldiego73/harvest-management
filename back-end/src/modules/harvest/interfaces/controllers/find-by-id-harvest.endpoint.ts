@@ -41,6 +41,7 @@ export class FindByIdHarvestEndpoint extends BaseController {
     const harvest = resultOrError.value;
 
     return {
+      id: harvest.id.toValue(),
       fruitId: harvest.fruitId.toValue(),
       varietyId: harvest.varietyId.toValue(),
       farmerId: harvest.farmerId.toValue(),

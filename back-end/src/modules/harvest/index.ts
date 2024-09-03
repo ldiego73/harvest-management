@@ -17,6 +17,7 @@ import {
   FindAllQueryHandler,
   FindByIdQueryHandler,
   AddHarvestCommandHandler,
+  UploadHarvestCommandHandler,
 } from "./application";
 
 import {
@@ -27,6 +28,7 @@ import {
   FindAllByFruitIdHarvestEndpoint,
   FindAllHarvestEndpoint,
   FindByIdHarvestEndpoint,
+  UploadHarvestEndpoint,
 } from "./interfaces";
 
 const repository = new HarvestRepositoryImpl();
@@ -56,6 +58,7 @@ const addHarvestCommandHandler = new AddHarvestCommandHandler(
   fieldRepository,
   clientRepository,
 );
+const uploadHarvestCommandHandler = new UploadHarvestCommandHandler(repository);
 
 const addHarvestEndpoint = new AddHarvestEndpoint(addHarvestCommandHandler);
 const findAllByClientIdHarvestEndpoint = new FindAllByClientIdHarvestEndpoint(
@@ -74,6 +77,9 @@ const findAllHarvestEndpoint = new FindAllHarvestEndpoint(findAllQueryHandler);
 const findByIdHarvestEndpoint = new FindByIdHarvestEndpoint(
   findByIdQueryHandler,
 );
+const uploadHarvestEndpoint = new UploadHarvestEndpoint(
+  uploadHarvestCommandHandler,
+);
 
 export const harvestControllers = [
   addHarvestEndpoint,
@@ -83,4 +89,5 @@ export const harvestControllers = [
   findAllByFruitIdHarvestEndpoint,
   findAllHarvestEndpoint,
   findByIdHarvestEndpoint,
+  uploadHarvestEndpoint,
 ];
