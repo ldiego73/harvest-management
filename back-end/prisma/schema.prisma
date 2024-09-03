@@ -22,7 +22,7 @@ model Fruit {
 
 model Variety {
   id      String    @id
-  name    String    @unique
+  name    String
   fruit   Fruit     @relation(fields: [fruitId], references: [id])
   fruitId String
   Harvest Harvest[]

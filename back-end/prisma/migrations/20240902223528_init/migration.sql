@@ -58,9 +58,6 @@ CREATE TABLE "Client" (
 CREATE UNIQUE INDEX "Fruit_name_key" ON "Fruit"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Variety_name_key" ON "Variety"("name");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Variety_fruitId_name_key" ON "Variety"("fruitId", "name");
 
 -- CreateIndex
